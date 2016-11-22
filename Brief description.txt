@@ -1,0 +1,23 @@
+Brief description
+
+processClip: 
+	driver of all
+
+diff3: 
+	positive differences between frames. Assumes ball is white. So a pixel turning white in next frame will light up(255) while one turning dark leave nothing(0).
+	Two step differences (1st one between frames, both positive and negative diff, 2nd one between results of 1st one to remove duplication) did not work well.
+
+findblob: 
+	LoG for finding blobs. No longer in use. Too slow and too many matches.
+
+findball: 
+	find candidates by looking at connected regions (px val=255). Prunes regions by area, ratio, compactness.
+
+nneighbours: 
+	connects nearest neighbours. For each candidate find (within next 2 frames) the nearest neighbours and assigns them a same group id (connected).
+
+recfit: 
+	originally named after recursive searching and curve fitting. Turned out to be working by guessing ball locations beyond connected candidates. Specifically, it maintains a push pop queue. For each group in queue fit a curve on group and crop two ends at ~20 frames beyond group bondaries. Then slide the curve vertically to create an area/surface/cage. Other groups that has enough amount of its points falling in this cage gets merged with current group. 
+
+
+Jack M
