@@ -1,4 +1,4 @@
-function [candidates, preview] = findblob(clip, make_preview)
+function [candidates, preview] = findBlob(clip, make_preview)
     candidates = zeros(10,3,size(clip,3));
     preview = 0.3*clip;  % Dim the original clip to display interest points
     mask = zeros(size(preview));  % Where interest points are

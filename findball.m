@@ -1,8 +1,7 @@
-
-function [xyaf, preview] = findball(clip)
+function [xyf, preview] = findBall(clip)
     preview = 0.3*clip;  % Dim original clip to display interest points
     mask = zeros(size(preview));  % interest points storage
-    xyaf = zeros(0,4);
+    xyf = zeros(0,3);
     
     % Parameters. TO BE ADJUSTED FURTHER
     area_min = 120; area_max = 300;
@@ -30,7 +29,7 @@ function [xyaf, preview] = findball(clip)
                 % Record to outputs
                 x = stats(c).Centroid(1);
                 y = stats(c).Centroid(2);
-                xyaf(end+1,:) = [x y area f];
+                xyf(end+1,:) = [x y f];
                 mask(round(y),round(x), 1, f) = 1;
             end
         end

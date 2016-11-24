@@ -1,4 +1,12 @@
-function out = sceneFeature(im, grassRange, soilRange)
+function out = sceneFeature(im)
+persistent grassRange soilRange;
+if isempty(grassRange)
+    load('grass.mat');
+end
+if isempty(soilRange)
+    load('soil.mat');
+end
+
 [h, w, ~] = size(im);
 blockh = h/4;
 blockw = w/4;
@@ -7,7 +15,7 @@ n = blockh * blockw;
 blocks = mat2cell(im, ones(4,1)*blockh, ones(4,1)*blockw, 3);
 blocks = blocks(2:4, :); % discard first row
 blocks = reshape(blocks, 12, 1);
-feature = zeros(12 ,1);
+feature = zeros(1, 12);
 
 for i=1:12
     block = blocks{i};
@@ -26,9 +34,8 @@ for i=1:12
     otherRatio = sum(other(:)) / n;
 
     b = [otherRatio>0.3, soilRatio>0.3, grassRatio>0.3];
-    feature(i, 1) = bi2de(b, 'left-msb');
+    feature(1, i) = bi2de(b, 'left-msb');
 end
-
 out = feature;
 end
 

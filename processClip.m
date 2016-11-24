@@ -1,39 +1,39 @@
-% clc; clear all; close all;
+% works better with hd videos; ball has too few pixels in lower resolution
+video = VideoReader('video2.mp4');
+videoh = video.Height;
+videow = video.Width;
+videoStruct = struct('data',zeros(videoh,videow,3,'uint8'));
 
-% !!! Current settings are only tested on one 720P hd video !!!
-% We might need to shrink videos to a same smaller size
+%% STEP 1: scene classification
+fprintf('Begin step 1..\n');
+load('sceneModel.mat', 'sceneModel');
+k = 1;
+while hasFrame(video)
+    frame = readFrame(video);
+    videoStruct(k).data = frame;
+    feature = sceneFeature(frame);
+    videoStruct(k).isPitching = predict(sceneModel, feature);
+    k = k+1;
+end
+% find first and last and take frames in between.
+result = horzcat(videoStruct(:).isPitching);
+first = find(result==1,1);
+last = find(result==1,1,'last');
+clip = cat(4, videoStruct(first:last).data);
 
-%% Load Pitch Clip (Assuming Step 1 done)
-% clipname = input('Please enter clip name: ', 's');
-clipname = 'MLB''s Fastest Pitch Ever Recorded.mp4';
-fprintf('\nReading Clip...\n');
-clip1 = VideoReader(clipname).read([650 670]); % Works 90% under current settings
-% clip1 = VideoReader(clipname).read([1420 1470]); % Works 80%
-% clip1 = VideoReader(clipname).read([1660 1740]); % Works 85%
-% clip1 = VideoReader(clipname).read([2230 2280]); % Works 55% -> Tighten cage 
-
-
-%% Noise suppression
+%% STEP 2: ball candidate detection
+fprintf('Begin step 2..\n');
 g = fspecial('gaussian', [5,5],1.6);
-bclip1 = imfilter(clip1, g);
+% Noise suppression
+clip = imfilter(clip, g);
+% Get binary frame difference
+dclip = diff3(clip);
+% Filter ball candidates
+[candidates, cclip] = findBall(dclip);
+% show scatter plots HERE
 
-
-%% Start of Step 2
-%% Get binary frame difference (1 channel: 0 or 255)
-disp('Calculating differences...');
-dclip1 = diff3(bclip1);
-% implay(dclip1);
-
-%% Find and filter ball candidates
-disp('Filtering candidates...');
-[candidates, cclip1] = findball(dclip1);
-implay(cclip1);
-
-
-%% Start of Step 3
-%% Trajectory extraction
-disp('Fitting curves...');
-segments = nneighbours(candidates, cclip1);
+%% STEP 3: ball trajectory extractionfprintf('Begin step 3..\n');
+segments = nneighbours(candidates, cclip);
 
 %% Under construction
 bestfit = recfit(segments, cclip1);  % roughly tested, passed. parameters not tuned
