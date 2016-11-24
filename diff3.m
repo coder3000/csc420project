@@ -7,4 +7,5 @@ function greyclip = diff3(clip)
     threshold = (graythresh(greyclip)+epsilon)*255; % Get threshold
     greyclip(greyclip<threshold) = 0; % Cut off
     greyclip(greyclip>=threshold) = 255; % Saturation
+    greyclip = squeeze(greyclip);
 end
