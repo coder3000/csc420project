@@ -31,7 +31,7 @@ function [xyif, preview] = findBall(dclip)
         end
     end
     % Dim original clip to display interest points
-    preview = 0.2*255*dclip;  
+    preview = 0.3*255*uint8(dclip);  
     % Apply mask
     preview(mask==1)=255;
 end
