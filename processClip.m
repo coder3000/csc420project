@@ -28,11 +28,15 @@ g = fspecial('gaussian', [5,5],1.6);
 clip = imfilter(clip, g);
 % Get binary frame difference
 dclip = diff3(clip);
+% IDEA: detect and cut camera movement
+dclip = detectCameraMov(dclip);
 % Filter ball candidates
 [candidates, cclip] = findBall(dclip);
 % show scatter plots
-figure; gscatter(candidates(:, 4), candidates(:, 1),candidates(:, 3), 'br', 'xo'); 
-figure; gscatter(candidates(:, 4), candidates(:, 2),candidates(:, 3), 'br', 'xo'); 
+figure; gscatter(candidates(:, 4), candidates(:, 1),candidates(:, 3), 'br', 'xo');
+title('X distribution')
+figure; gscatter(candidates(:, 4), candidates(:, 2),candidates(:, 3), 'br', 'xo');
+title('Y distribution')
 
 %% STEP 3: ball trajectory extraction
 fprintf('Begin step 3..\n');
