@@ -1,41 +1,47 @@
-% clc; clear all; close all;
+% works better with hd videos; ball has too few pixels in lower resolution
+video = VideoReader('video2.mp4');
+videoh = video.Height;
+videow = video.Width;
+videoStruct = struct('data',zeros(videoh,videow,3,'uint8'));
 
-% !!! Current settings are only tested on one 720P hd video !!!
-% We might need to shrink videos to a same smaller size
+%% STEP 1: scene classification
+fprintf('Begin step 1..\n');
+load('sceneModel.mat', 'sceneModel');
+k = 1;
+while hasFrame(video)
+    frame = readFrame(video);
+    videoStruct(k).data = frame;
+    feature = sceneFeature(frame);
+    videoStruct(k).isPitching = predict(sceneModel, feature);
+    k = k+1;
+end
+% find first and last and take frames in between.
+result = horzcat(videoStruct(:).isPitching);
+first = find(result==1,1);
+last = find(result==1,1,'last');
+clip0 = cat(4, videoStruct(first:last).data);
 
-%% Load Pitch Clip (Assuming Step 1 done)
-% clipname = input('Please enter clip name: ', 's');
-clipname = 'MLB''s Fastest Pitch Ever Recorded.mp4';
-fprintf('\nReading Clip...\n');
-clip1 = VideoReader(clipname).read([650 670]); % Works 90% under current settings
-% clip1 = VideoReader(clipname).read([1420 1470]); % Works 80%
-% clip1 = VideoReader(clipname).read([1660 1740]); % Works 85%
-% clip1 = VideoReader(clipname).read([2230 2280]); % Works 55% -> Tighten cage 
-
-
-%% Noise suppression
+%% STEP 2: ball candidate detection
+fprintf('Begin step 2..\n');
 g = fspecial('gaussian', [5,5],1.6);
-bclip1 = imfilter(clip1, g);
+% Noise suppression
+clip = imfilter(clip0, g);
+% Get binary frame difference
+dclip = diff3(clip);
+% Filter ball candidates
+[candidates, ~] = findBall(dclip);
+% show scatter plots
+figure; gscatter(candidates(:, 4), candidates(:, 1),candidates(:, 3), 'br', 'xo'); 
+figure; gscatter(candidates(:, 4), candidates(:, 2),candidates(:, 3), 'br', 'xo'); 
 
-
-%% Start of Step 2
-%% Get binary frame difference (1 channel: 0 or 255)
-disp('Calculating differences...');
-dclip1 = diff3(bclip1);
-% implay(dclip1);
-
-%% Find and filter ball candidates
-disp('Filtering candidates...');
-[candidates, cclip1] = findball(dclip1);
-implay(cclip1);
-
-
-%% Start of Step 3
-%% Trajectory extraction
-disp('Fitting curves...');
-segments = nneighbours(candidates, cclip1);
-
-%% Under construction
-bestfit = recfit(segments, cclip1);  % roughly tested, passed. parameters not tuned
-disp([segments(:,5) bestfit(:,5)]);  % To be removed. Shows assignment diff
-% Planned: figure out which group is most likely the curve and fit curves.
+%% STEP 3: ball trajectory extraction
+fprintf('Begin step 3..\n');
+segments = nneighbours(candidates);  % This is a modified version (v2). Panalty and iso points only.
+% segments = nneighbours_original(candidates);  % This is from paper. No panalty and all points.
+a = figure; gscatter(segments(:, 4), segments(:, 1),segments(:, 5)); hold on; 
+b = figure; gscatter(segments(:, 4), segments(:, 2),segments(:, 5)); hold on; 
+curve = fitcurve(segments);  % However, nneighbours (v2) makes this function hard to choose (no iso ratio)
+figure(a); plot(curve(:, 4), curve(:, 1), 'b');
+plot(curve(:, 4), curve(:, 1), 'bo'); 
+figure(b); plot(curve(:, 4), curve(:, 2), 'b'); 
+plot(curve(:, 4), curve(:, 2), 'bo'); 
