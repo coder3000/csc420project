@@ -30,15 +30,15 @@ clip = imfilter(clip, g);
 dclip = diff3(clip);
 % Filter ball candidates
 [candidates, cclip] = findBall(dclip);
-% show scatter plots here
-figure; gscatter(candidates(:, 4), candidates(:, 1)); 
-figure; gscatter(candidates(:, 4), candidates(:, 2));
+% show scatter plots
+figure; gscatter(candidates(:, 4), candidates(:, 1),candidates(:, 3), 'br', 'xo'); 
+figure; gscatter(candidates(:, 4), candidates(:, 2),candidates(:, 3), 'br', 'xo'); 
 
 %% STEP 3: ball trajectory extraction
 fprintf('Begin step 3..\n');
 segments = nneighbours(candidates, cclip);
 
 %% Under construction
-bestfit = recfit(segments, cclip1);  % roughly tested, passed. parameters not tuned
+bestfit = recfit(segments, cclip);  % roughly tested, passed. parameters not tuned      
 disp([segments(:,5) bestfit(:,5)]);  % To be removed. Shows assignment diff
 % Planned: figure out which group is most likely the curve and fit curves.

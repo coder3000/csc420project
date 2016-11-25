@@ -1,11 +1,11 @@
-function greyclip = diff3(clip)
+function bwdclip = diff3(clip)
     epsilon = 0.02; % Threshold bias
-    dclip0 = clip(:,:,:,2:end) - clip(:,:,:,1:end-1); % Positive difference
+    dclip = clip(:,:,:,2:end) - clip(:,:,:,1:end-1); % Positive difference
     % Otsu thresholding. Adapted from
     % https://www.mathworks.com/matlabcentral/answers/uploaded_files/6434/ExtractMovieAVIFrames.m
-    greyclip = (dclip0(:,:,1,:)+dclip0(:,:,2,:)+dclip0(:,:,3,:))/3; % rgb2grey
-    threshold = (graythresh(greyclip)+epsilon)*255; % Get threshold
-    greyclip(greyclip<threshold) = 0; % Cut off
-    greyclip(greyclip>=threshold) = 255; % Saturation
-    greyclip = squeeze(greyclip);
+    graydclip = (dclip(:,:,1,:)+dclip(:,:,2,:)+dclip(:,:,3,:))/3; % rgb2grey
+    threshold = (graythresh(graydclip)+epsilon)*255; % Get threshold
+    graydclip(graydclip<threshold) = 0; % Cut off
+    bwdclip = (graydclip > 0);
+    bwdclip = squeeze(bwdclip);
 end
