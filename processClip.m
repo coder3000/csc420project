@@ -19,30 +19,29 @@ end
 result = horzcat(videoStruct(:).isPitching);
 first = find(result==1,1);
 last = find(result==1,1,'last');
-clip = cat(4, videoStruct(first:last).data);
+clip0 = cat(4, videoStruct(first:last).data);
 
 %% STEP 2: ball candidate detection
 fprintf('Begin step 2..\n');
 g = fspecial('gaussian', [5,5],1.6);
 % Noise suppression
-clip = imfilter(clip, g);
+clip = imfilter(clip0, g);
 % Get binary frame difference
 dclip = diff3(clip);
-% IDEA: detect and cut camera movement
-dclip = detectCameraMov(dclip);
 % Filter ball candidates
-[candidates, cclip] = findBall(dclip);
+[candidates, ~] = findBall(dclip);
 % show scatter plots
-figure; gscatter(candidates(:, 4), candidates(:, 1),candidates(:, 3), 'br', 'xo');
-title('X distribution')
-figure; gscatter(candidates(:, 4), candidates(:, 2),candidates(:, 3), 'br', 'xo');
-title('Y distribution')
+figure; gscatter(candidates(:, 4), candidates(:, 1),candidates(:, 3), 'br', 'xo'); 
+figure; gscatter(candidates(:, 4), candidates(:, 2),candidates(:, 3), 'br', 'xo'); 
 
 %% STEP 3: ball trajectory extraction
 fprintf('Begin step 3..\n');
-segments = nneighbours(candidates, cclip);
-
-%% Under construction
-bestfit = recfit(segments, cclip);  % roughly tested, passed. parameters not tuned      
-disp([segments(:,5) bestfit(:,5)]);  % To be removed. Shows assignment diff
-% Planned: figure out which group is most likely the curve and fit curves.
+segments = nneighbours(candidates);  % This is a modified version (v2). Panalty and iso points only.
+% segments = nneighbours_original(candidates);  % This is from paper. No panalty and all points.
+a = figure; gscatter(segments(:, 4), segments(:, 1),segments(:, 5)); hold on; 
+b = figure; gscatter(segments(:, 4), segments(:, 2),segments(:, 5)); hold on; 
+curve = fitcurve(segments);  % However, nneighbours (v2) makes this function hard to choose (no iso ratio)
+figure(a); plot(curve(:, 4), curve(:, 1), 'b');
+plot(curve(:, 4), curve(:, 1), 'bo'); 
+figure(b); plot(curve(:, 4), curve(:, 2), 'b'); 
+plot(curve(:, 4), curve(:, 2), 'bo'); 
