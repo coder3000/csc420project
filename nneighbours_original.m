@@ -1,11 +1,11 @@
-function cout = nneighbours(candidates)
+function cout = nneighbours_original(candidates)
     c = candidates(candidates(:,3)==1, :);
     c(:, end+1) = 0;
     cout = zeros(0, size(c,2));
     group = 1; % Group id.
     maxdist = 140; % Max length of valid first segments.
-    maxerror = 100; % Max error between prediction and actual
-    maxguess = 4; % Max # guess in a row terminates curve
+    maxerror = 70; % Max error between prediction and actual
+    maxguess = 3; % Max # guess in a row terminates curve
     straightness = 0.5; % Panalize best fit curvature. I got some...
                         % interesting results without this.
     
@@ -19,11 +19,7 @@ function cout = nneighbours(candidates)
         targets = find(c(:,4)==cp(4)+1);
         [idx, d] = nearest(cp, c(targets,1:2));
         if d > maxdist
-            targets = find(c(:,4)==cp(4)+2);
-            [idx, d] = nearest(cp, c(targets,1:2));
-            if d > maxdist
-                continue;
-            end
+            continue;
         end
         cout(end+1,:) = [cp(1:4) group];
         cout(end+1,:) = [c(targets(idx),1:4) group];
@@ -53,14 +49,15 @@ function cout = nneighbours(candidates)
                 straightness*polyval(psy, framerange(end)+1);
             
             % See if next point has a match
-            cnext = find(c(:,4)==framerange(end)+1);
-            [idx, d] = nearest([predictx predicty], c(cnext,:));
+            cnext = find(candidates(:,4)==framerange(end)+1);
+            [idx, d] = nearest([predictx predicty], candidates(cnext,:));
             if d > maxerror  % If not, take predicted point as next
                 cout(end+1,:) = [predictx predicty 1 framerange(end)+1 group];
                 notfound = notfound + 1;
             else  % If yes, include the match
-                cout(end+1,:) = [c(cnext(idx),1:4) group];
-                c(cnext(idx),5) = group;
+                match = candidates(cnext(idx),1:4);
+                cout(end+1,:) = [match group];
+                c(c(:,1)==match(1) & c(:,2)==match(2),5) = group;
                 notfound = 0;
             end
             
@@ -77,7 +74,7 @@ function [idx, distance] = nearest(target, candidates)
         distance = Inf;
         return;
     end
-    candidates(:,end+1) = (target(1)-candidates(:,1))^2 + (target(2)-candidates(:,2))^2;
+    candidates(:,end+1) = (target(1)-candidates(:,1)).^2 + (target(2)-candidates(:,2)).^2;
     [~,i] = sort(candidates(:,end));
     idx = i(1);
     distance = sqrt(candidates(idx,end));
