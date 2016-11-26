@@ -1,7 +1,7 @@
 function out = findTrajectory(candidates)
 maxdist = 150;
 maxguess = 4;
-maxerror = 50;
+maxerror = 30;
 
 % convert to cell array for easier manipulation
 maxFrame = max(candidates(:, 4));
