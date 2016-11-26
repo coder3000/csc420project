@@ -1,5 +1,5 @@
 % works better with hd videos; ball has too few pixels in lower resolution
-video = VideoReader('video3.mp4');
+video = VideoReader('video2.mp4');
 videoh = video.Height;
 videow = video.Width;
 videoStruct = struct('data',zeros(videoh,videow,3,'uint8'));
@@ -54,15 +54,12 @@ for i=1:size(segments,2)
 end
 % TODO take best curve ()
 
-% TODO draw ball positions on scene
 balls = segments(4).candidates;
 firstBallFrame = balls(1,4);
 balls = [balls(:, 1:2) zeros(size(balls,1), 1)];
 screenshot = clip(:,:,:,firstBallFrame);
 screenshotResult = insertShape(screenshot,'circle', balls,'LineWidth',5);
 figure;imshow(screenshotResult);
-
-
 
 %% Under construction
 bestfit = recfit(segments, cclip);  % roughly tested, passed. parameters not tuned      
