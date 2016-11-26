@@ -1,5 +1,5 @@
 % works better with hd videos; ball has too few pixels in lower resolution
-video = VideoReader('video2.mp4');
+video = VideoReader('video3.mp4');
 videoh = video.Height;
 videow = video.Width;
 videoStruct = struct('data',zeros(videoh,videow,3,'uint8'));
@@ -33,15 +33,28 @@ dclip = detectCameraMov(dclip);
 % Filter ball candidates
 [candidates, cclip] = findBall(dclip);
 % show scatter plots
-figure; gscatter(candidates(:, 4), candidates(:, 1),candidates(:, 3), 'br', 'xo');
+xdi = figure; gscatter(candidates(:, 4), candidates(:, 1),candidates(:, 3), 'br', 'xo');
 title('X distribution')
-figure; gscatter(candidates(:, 4), candidates(:, 2),candidates(:, 3), 'br', 'xo');
+ydi = figure; gscatter(candidates(:, 4), candidates(:, 2),candidates(:, 3), 'br', 'xo');
 title('Y distribution')
 
 %% STEP 3: ball trajectory extraction
 fprintf('Begin step 3..\n');
-segments = nneighbours(candidates, cclip);
+segments = findTrajectory(candidates);
+% draw curves on scatter plots
+figure(xdi); hold on;
+for i=1:size(segments,2)
+    cans = segments(i).candidates;
+    plot(cans(:,4), cans(:,1));
+end
+figure(ydi); hold on;
+for i=1:size(segments,2)
+    cans = segments(i).candidates;
+    plot(cans(:,4), cans(:,2));
+end
+% take best curve
 
+% draw ball positions on scene
 %% Under construction
 bestfit = recfit(segments, cclip);  % roughly tested, passed. parameters not tuned      
 disp([segments(:,5) bestfit(:,5)]);  % To be removed. Shows assignment diff
