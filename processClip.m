@@ -56,7 +56,7 @@ end
 
 balls = segments(4).candidates;
 firstBallFrame = balls(1,4);
-balls = [balls(:, 1:2) zeros(size(balls,1), 1)];
+balls = [balls(:, 1:2) 2*ones(size(balls,1),1)]; % circle radius 2
 screenshot = clip(:,:,:,firstBallFrame);
 screenshotResult = insertShape(screenshot,'circle', balls,'LineWidth',5);
 figure;imshow(screenshotResult);
