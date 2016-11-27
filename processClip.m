@@ -55,8 +55,9 @@ end
 
 curve = filtercurve(segments);
 if isempty(curve)
-    fprintf('No trajectory found\n');
+    fprintf('No trajectory found.\n');
 else
+     fprintf('Done.\n');
     figure(xdi); 
     plot(curve.candidates(:,4), curve.candidates(:,1), 'Color', 'g', 'LineWidth',2);
     figure(ydi); 

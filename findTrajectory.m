@@ -75,6 +75,15 @@ for frame=1:maxFrame-2
             end
             curFrame = curFrame + 1;
         end
+        
+        % cut last few predicted points
+        length = size(group, 1);
+        for j=0:2
+            if group(length-j, 3) == 0
+                group = group(1:length-j-1,:);
+            end
+        end
+        
         group(:,end+1) = group_id;
         out(group_id).candidates = group;
         out(group_id).length = size(group, 1);
