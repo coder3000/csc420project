@@ -37,7 +37,8 @@ for frame=1:maxFrame-2
             continue;
         end
         
-        group = [origin; next_ball; next_next_ball];
+        % 1 is flag for being real (not predicted) ball
+        group = [origin 1; next_ball 1; next_next_ball 1];
         
         p_xdi = polyfit(group(:,4), group(:,1),1);
         p_ydi = polyfit(group(:,4), group(:,2),2);
@@ -57,7 +58,7 @@ for frame=1:maxFrame-2
             for k=1:size(curBalls, 1)
                 % check if any ball pos is close to our prediction
                 if abs(predicted_xdi - curBalls(k, 1)) < maxerror && abs(predicted_ydi - curBalls(k, 2)) < maxerror
-                    group(end+1,:) = curBalls(k, :);
+                    group(end+1,:) = [curBalls(k, :) 1]; 
                     p_xdi = polyfit(group(:,4), group(:,1),1);
                     p_ydi = polyfit(group(:,4), group(:,2),2);
                     prediction_met = true;
@@ -71,10 +72,19 @@ for frame=1:maxFrame-2
                 if notfoundcount == maxguess
                     break;
                 end
-                group(end+1,:) = [predicted_xdi, predicted_ydi, 0, curFrame];
+                group(end+1,:) = [predicted_xdi, predicted_ydi, 0, curFrame, 0];
             end
             curFrame = curFrame + 1;
         end
+        
+        % cut last few predicted points
+        length = size(group, 1);
+        for j=0:2
+            if group(length-j, 5) == 0
+                group = group(1:length-j-1,:);
+            end
+        end
+        
         group(:,end+1) = group_id;
         out(group_id).candidates = group;
         out(group_id).length = size(group, 1);

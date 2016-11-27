@@ -27,7 +27,7 @@ g = fspecial('gaussian', [5,5],1.6);
 % Noise suppression
 clip = imfilter(clip, g);
 % Get binary frame difference
-dclip = diff3(clip);
+dclip = diff3new(clip);
 % IDEA: detect and cut camera movement
 dclip = detectCameraMov(dclip);
 % Filter ball candidates
@@ -55,8 +55,9 @@ end
 
 curve = filtercurve(segments);
 if isempty(curve)
-    fprintf('No trajectory found\n');
+    fprintf('No trajectory found.\n');
 else
+    fprintf('Done.\n');
     figure(xdi); 
     plot(curve.candidates(:,4), curve.candidates(:,1), 'Color', 'g', 'LineWidth',2);
     figure(ydi); 
@@ -70,3 +71,8 @@ else
     screenshotResult = insertShape(screenshot,'circle', balls,'LineWidth',5);
     figure;imshow(screenshotResult);
 end
+
+% calculate speed (km/h)
+fps = round(video.FrameRate);
+speed = 18.44 / (curve.length / fps) * 60 * 60 / 1000;
+
