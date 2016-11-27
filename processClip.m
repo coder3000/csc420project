@@ -72,7 +72,7 @@ else
     figure;imshow(screenshotResult);
 end
 
-% calculate speed
+% calculate speed (km/h)
 fps = round(video.FrameRate);
-kmh = 18.44 / (curve.length / fps) * 60 * 60 / 1000;
+speed = 18.44 / (curve.length / fps) * 60 * 60 / 1000;
 
