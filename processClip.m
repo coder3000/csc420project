@@ -52,16 +52,21 @@ for i=1:size(segments,2)
     cans = segments(i).candidates;
     plot(cans(:,4), cans(:,2), 'Color', 'k');
 end
-% TODO take best curve ()
 
-balls = segments(4).candidates;
-firstBallFrame = balls(1,4);
-balls = [balls(:, 1:2) 2*ones(size(balls,1),1)]; % circle radius 2
-screenshot = clip(:,:,:,firstBallFrame);
-screenshotResult = insertShape(screenshot,'circle', balls,'LineWidth',5);
-figure;imshow(screenshotResult);
+curve = filtercurve(segments);
+if isempty(curve)
+    fprintf('No trajectory found\n');
+else
+    figure(xdi); 
+    plot(curve.candidates(:,4), curve.candidates(:,1), 'Color', 'g', 'LineWidth',2);
+    figure(ydi); 
+    plot(curve.candidates(:,4), curve.candidates(:,2), 'Color', 'g', 'LineWidth',2);
 
-%% Under construction
-bestfit = recfit(segments, cclip);  % roughly tested, passed. parameters not tuned      
-disp([segments(:,5) bestfit(:,5)]);  % To be removed. Shows assignment diff
-% Planned: figure out which group is most likely the curve and fit curves.
+    balls = curve.candidates;
+    firstBallFrame = balls(1,4);
+    balls = [balls(:, 1:2) 2*ones(size(balls,1),1)]; % circle radius 2
+    screenshot = clip(:,:,:,firstBallFrame);
+
+    screenshotResult = insertShape(screenshot,'circle', balls,'LineWidth',5);
+    figure;imshow(screenshotResult);
+end
