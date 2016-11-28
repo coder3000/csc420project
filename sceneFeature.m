@@ -6,7 +6,7 @@ end
 if isempty(soilRange)
     load('soil.mat');
 end
-
+im = rgb2ycbcr(im);
 [h, w, ~] = size(im);
 blockh = h/4;
 blockw = w/4;

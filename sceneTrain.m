@@ -20,7 +20,7 @@ end
 
 features = vertcat(pitchingFeatures, nonPitchingFeatures);
 responses = vertcat(pitchingResponses, nonPitchingResponses);
-sceneModel = fitcknn(features,responses,'NumNeighbors',3);
+sceneModel = fitcknn(features,responses,'NumNeighbors',9, 'DistanceWeight', 'inverse');
 % save trained model
 save('sceneModel.mat', 'sceneModel');
 
