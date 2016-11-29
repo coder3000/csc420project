@@ -15,6 +15,11 @@ function curve = filterCurve(segments)
             continue;
         end
         
+        % Direction filter, curve x coordinates must not decrease.
+        if (s.candidates(1,1) > s.candidates(2,1))
+            continue;
+        end
+        
         % Prediction error
         framerange = s.candidates(:,4);
         predictx = polyval(s.px, framerange);
