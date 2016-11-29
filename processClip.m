@@ -53,7 +53,7 @@ for i=1:size(segments,2)
     plot(cans(:,4), cans(:,2), 'Color', 'k');
 end
 
-curve = filtercurve(segments);
+curve = filterCurve(segments);
 if isempty(curve)
     fprintf('No trajectory found.\n');
 else
