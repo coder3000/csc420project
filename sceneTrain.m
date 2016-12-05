@@ -1,3 +1,4 @@
+%% Train KNN model for pitching scene classification
 pitchingFiles = dir('pitching/*.jpg'); 
 pitchingNumFiles = length(pitchingFiles);
 pitchingFeatures = zeros(pitchingNumFiles, 12);
@@ -20,7 +21,7 @@ end
 
 features = vertcat(pitchingFeatures, nonPitchingFeatures);
 responses = vertcat(pitchingResponses, nonPitchingResponses);
-sceneModel = fitcknn(features,responses,'NumNeighbors',9, 'DistanceWeight', 'inverse');
+sceneModel = fitcknn(features,responses,'NumNeighbors',3,'DistanceWeight','squaredinverse');
 % save trained model
 save('sceneModel.mat', 'sceneModel');
 

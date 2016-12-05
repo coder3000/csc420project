@@ -1,5 +1,5 @@
 %% Preparations, read video, pack csv to struct.
-filein = fopen('data4.csv');
+filein = fopen('part4data.csv');
 s = textscan(filein, '%s %d %d %s %s %f %s %d', 500, 'Delimiter',',');
 fclose(filein);
 

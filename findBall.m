@@ -5,7 +5,7 @@ function [xyif, preview] = findBall(dclip)
     % Parameters. TO BE ADJUSTED FURTHER
     area_min = 70; area_max = 300;
     ratio_max = 5;
-    compactmin = 0.7;
+    compactmin = 0.6;
     isoRange = 50;
 
     for f=1:size(dclip, 3)

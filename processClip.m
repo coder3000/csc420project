@@ -1,5 +1,5 @@
 % works better with hd videos; ball has too few pixels in lower resolution
-video = VideoReader('video2.mp4');
+video = VideoReader('video3.mp4');
 videoh = video.Height;
 videow = video.Width;
 videoStruct = struct('data',zeros(videoh,videow,3,'uint8'));
@@ -29,7 +29,7 @@ clip = imfilter(clip, g);
 % Get binary frame difference
 dclip = diff3new(clip);
 % IDEA: detect and cut camera movement
-dclip = detectCameraMov(dclip);
+%dclip = detectCameraMov(dclip);
 % Filter ball candidates
 [candidates, cclip] = findBall(dclip);
 % show scatter plots
@@ -65,14 +65,15 @@ else
 
     balls = curve.candidates;
     firstBallFrame = balls(1,4);
-    balls = [balls(:, 1:2) 2*ones(size(balls,1),1)]; % circle radius 2
+    balls = balls(balls(:,5)==1, 1:2); % take out predicted ones
+    circles = [balls 2*ones(size(balls,1),1)]; % circle radius 2
     screenshot = clip(:,:,:,firstBallFrame);
 
-    screenshotResult = insertShape(screenshot,'circle', balls,'LineWidth',5);
+    screenshotResult = insertShape(screenshot,'circle',circles,'LineWidth',5);
     figure;imshow(screenshotResult);
+    % calculate speed (km/h)
+    fps = round(video.FrameRate);
+    speed = 18.44 / (curve.length / fps) * 60 * 60 / 1000;
 end
 
-% calculate speed (km/h)
-fps = round(video.FrameRate);
-speed = 18.44 / (curve.length / fps) * 60 * 60 / 1000;
 
