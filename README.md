@@ -2,4 +2,6 @@
 <img src="./video2.jpg" width="400">
 <img src="./video3.jpg" width="400">
 
-Run processClip.m for demo
+A final project for UofT CSC420. Run processClip.m for the demo.
+
+Group: Taeyoung Hahn, Yanming Mai
