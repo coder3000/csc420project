@@ -5,7 +5,7 @@ function bwdclip = diff3new(clip)
     sumClip = squeeze(sumClip);
     
      % 50 percent of average intensity per frame
-    avgInt = sumClip / (2*3*h*w);
+    avgInt = sumClip / (3*3*h*w);
     
     dclip = clip(:,:,:,2:end) - clip(:,:,:,1:end-1); % Positive difference
     graydclip = (dclip(:,:,1,:)+dclip(:,:,2,:)+dclip(:,:,3,:))/3; % rgb2grey

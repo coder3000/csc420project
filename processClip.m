@@ -1,5 +1,5 @@
 % works better with hd videos; ball has too few pixels in lower resolution
-video = VideoReader('video3.mp4');
+video = VideoReader('video2.mp4');
 videoh = video.Height;
 videow = video.Width;
 videoStruct = struct('data',zeros(videoh,videow,3,'uint8'));
