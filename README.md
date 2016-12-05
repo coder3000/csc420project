@@ -1,3 +1,5 @@
 # csc420project
-![alt=video2](./video2.jpg | width=300)
-![alt=video3](./video3.jpg | width=300)
+<img src="./video2.jpg" width="400">
+<img src="./video3.jpg" width="400">
+
+Run processClip.m for demo
