@@ -29,7 +29,7 @@ clip = imfilter(clip, g);
 % Get binary frame difference
 dclip = diff3new(clip);
 % IDEA: detect and cut camera movement
-%dclip = detectCameraMov(dclip);
+dclip = detectCameraMov(dclip);
 % Filter ball candidates
 [candidates, cclip] = findBall(dclip);
 % show scatter plots
@@ -56,8 +56,8 @@ end
 curve = filterCurve(segments);
 if isempty(curve)
     fprintf('No trajectory found.\n');
+    return;
 else
-    fprintf('Done.\n');
     figure(xdi); 
     plot(curve.candidates(:,4), curve.candidates(:,1), 'Color', 'g', 'LineWidth',2);
     figure(ydi); 
@@ -74,6 +74,38 @@ else
     % calculate speed (km/h)
     fps = round(video.FrameRate);
     speed = 18.44 / (curve.length / fps) * 60 * 60 / 1000;
+    fprintf('speed estimation: %.2f km/h\n', speed);
 end
+
+%% Step 4: Classification
+%% STEP 4.1 Normalization
+fprintf('Begin step 4..\n');
+% Plot before normalization
+figure; axis([0 1080 0 720]); hold on;
+plot(curve.candidates(:,1), 720-curve.candidates(:,2), 'Linewidth', 2); 
+
+curve = normalizeCurve(curve, 7);
+
+% Plot after normalization
+figure; axis([-0.5 1.5 -0.5 0.85]); hold on;
+plot(curve.candidates(:,1), -curve.candidates(:,2), 'Linewidth', 2);
+
+%% STEP 4.2: Classification
+features = transpose([curve.candidates(:,1); curve.candidates(:,2)]);
+
+% KNN
+pitchClassModelKNN = [];
+load pitchClassModelKNN.mat pitchClassModelKNN;
+fprintf('\nPrediction of KNN classifier:');
+disp(predict(pitchClassModelKNN, features));
+
+%multi SVM
+pitchClassModelSVM = [];
+load pitchClassModelSVM.mat pitchClassModelSVM;
+fprintf('Prediction of multi-class SVM classifier:');
+disp(predict(pitchClassModelSVM, features));
+
+% correct answer: FF
+fprintf('Correct Answer:   ''FF''\n\n');
 
 

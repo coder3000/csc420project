@@ -7,12 +7,12 @@ end
 
 function [truecount, pitchingNumFiles] = test(folder)
     load sceneModel;
-    pitchingFiles = dir(['part1test1/' folder '/*.jpg']); 
+    pitchingFiles = dir(['part1test/' folder '/*.jpg']); 
     pitchingNumFiles = length(pitchingFiles);
     truecount = 0;
 
     for k = 1:pitchingNumFiles
-        im = imread(['part1test1/' folder '/' pitchingFiles(k).name]);
+        im = imread(['part1test/' folder '/' pitchingFiles(k).name]);
         feature = sceneFeature(im);
         if predict(sceneModel, feature)
             truecount = truecount + 1;
