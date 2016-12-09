@@ -14,21 +14,21 @@ function part4performance(mode)
     end
 
     if (strcmp(mode, 'KNN'))
-        KNNmodel = [];
-        load KNNmodel.mat KNNmodel;
-        predicts = predict(KNNmodel, features);
+        pitchClassModelKNN = [];
+        load pitchClassModelKNN.mat pitchClassModelKNN;
+        predicts = predict(pitchClassModelKNN, features);
         
     elseif (strcmp(mode, 'SVM'))
-        SVMmodel = [];
-        load SVMmodel.mat SVMmodel;
-        predicts = predict(SVMmodel, features);
+        pitchClassModelSVM = [];
+        load pitchClassModelSVM.mat pitchClassModelSVM;
+        predicts = predict(pitchClassModelSVM, features);
         
     elseif (strcmp(mode, 'AverageWeights'))
-        AWmodel = [];
-        load AWmodel.mat AWmodel;
-        distances = pdist2(features, AWmodel.Centroids);
+        pitchClassModelAW = [];
+        load pitchClassModelAW.mat pitchClassModelAW;
+        distances = pdist2(features, pitchClassModelAW.Centroids);
         [~,minidx] = min(distances, [], 2);
-        predicts = AWmodel.ClassNames(minidx);
+        predicts = pitchClassModelAW.ClassNames(minidx);
     end
     
     match = cellfun(@strcmp, predicts, label);

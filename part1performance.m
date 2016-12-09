@@ -1,4 +1,4 @@
-function part1test() 
+function part1performance() 
     [vote, total] = test('pitching');
     fprintf('Pitching scenes: voted %d/%d true. %f%% accurate.\n', vote, total, vote/total*100);
     [vote, total] = test('nonpitching');
